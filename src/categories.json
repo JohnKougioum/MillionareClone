@@ -1,0 +1,66 @@
+[
+    {
+        "category": "General Knowledge",
+        "categoryId": 9
+    },
+    {
+        "category": "Mythology",
+        "categoryId": 20
+    },
+    {
+        "category": "Celebrities",
+        "categoryId": 26
+    },
+    {
+        "category": "Animals",
+        "categoryId": 27
+    },
+    {
+        "category": "Geography",
+        "categoryId": 22
+    },
+    {
+        "category": "Vehicles",
+        "categoryId": 28
+    },
+    {
+        "category": "Japanese Anime & Manga",
+        "categoryId": 31
+    },
+    {
+        "category": "Science: Computers",
+        "categoryId": 18
+    },
+    {
+        "category": "Science: Mathematics",
+        "categoryId": 19
+    },
+    {
+        "category": "Science & nature",
+        "categoryId": 17
+    },
+    {
+        "category": "History",
+        "categoryId": 23
+    },
+    {
+        "category": "Video Games",
+        "categoryId": 15
+    },
+    {
+        "category": "Music",
+        "categoryId": 12
+    },
+    {
+        "category": "Films",
+        "categoryId": 11
+    },
+    {
+        "category": "Books",
+        "categoryId":10
+    },
+    {
+        "category": "Comics",
+        "categoryId": 29
+    }
+]

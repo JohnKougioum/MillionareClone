@@ -22,7 +22,12 @@
           <img class="md:h-96" src="../assets/better_logo.png" alt="HTML5" />
         </div>
         <div class="text-white text-3xl">
-          <button class="relative py-4 px-48 play__button">PLAY</button>
+          <button
+            @click="startPlayPhase"
+            class="relative py-4 px-48 play__button"
+          >
+            PLAY
+          </button>
         </div>
       </div>
     </div>
@@ -30,8 +35,17 @@
 </template>
 
 <script>
+import { mapActions } from "vuex";
 export default {
   name: "Home",
+  methods: {
+    startPlayPhase() {
+      const flag = true;
+      this.UPDATE_PLAY_PHASE(flag);
+      this.$router.push({ name: "Category" });
+    },
+    ...mapActions(["UPDATE_PLAY_PHASE"]),
+  },
 };
 </script>
 
