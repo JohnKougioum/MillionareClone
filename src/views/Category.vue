@@ -1,7 +1,7 @@
 <template>
   <div class="h-screen w-full overflow-hidden">
     <img
-      class="w-full h-full z-0 absolute image__blur"
+      class="w-full h-full z-0 absolute image__blur select-none"
       src="../assets/stage.jpg"
       alt="HTML5"
     />
@@ -24,13 +24,7 @@
       <div class="flex justify-start items-center mt-6">
         <button
           @click="startGame"
-          class="
-            text-white text-2xl
-            bg-indigo-900
-            hover:bg-yellow-400
-            h-16
-            w-48
-          "
+          class="text-white text-2xl bg-indigo-900 hover:bg-yellow-400 h-16 w-48"
         >
           Next
         </button>
@@ -68,6 +62,7 @@ export default {
         this.showModal = true;
         return;
       }
+      this.$router.push({ name: "Play" });
     },
     closeModal() {
       this.showModal = false;

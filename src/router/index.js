@@ -18,6 +18,12 @@ const routes = [
       import(/* webpackChunkName: "category" */ "../views/Category.vue"),
     meta: { playPhase: true },
   },
+  {
+    path: "/play",
+    name: "Play",
+    component: () => import(/* webpackChunkName: "play" */ "../views/Play.vue"),
+    meta: { playPhase: true },
+  },
 ];
 
 const router = new VueRouter({
