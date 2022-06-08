@@ -44,7 +44,11 @@ export default {
       }
       return false;
     },
-    ...mapGetters(["GET_ANSWERS", "GET_SHOW_CORRECT_ANSWER_TIMER"]),
+    ...mapGetters([
+      "GET_ANSWERS",
+      "GET_SHOW_CORRECT_ANSWER_TIMER",
+      "GET_ENABLED_ANSWERS",
+    ]),
   },
   methods: {
     takeAGuess() {
@@ -54,7 +58,15 @@ export default {
         this.UPDATE_SHOW_CORRECT_ANSWER_TIMER(flag);
       }, 2000);
     },
-    ...mapActions(["UPDATE_SHOW_CORRECT_ANSWER_TIMER"]),
+    prepareForNextRound() {
+      setTimeout(() => {
+        this.EMPTY_TRIVIA_NEXT_ROUND;
+      }, 4400);
+    },
+    ...mapActions([
+      "UPDATE_SHOW_CORRECT_ANSWER_TIMER",
+      "EMPTY_TRIVIA_NEXT_ROUND",
+    ]),
   },
 };
 </script>

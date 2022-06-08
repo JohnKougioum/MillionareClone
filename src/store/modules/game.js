@@ -3,32 +3,53 @@ import types from "../constants";
 export default {
   state: {
     progress: 0,
+    triviaData: [],
     question: "",
     answers: [],
     gameTimer: false,
     showQuestionTimer: false,
     showCorrectAnswerTimer: false,
+    enableAnswers: false,
   },
   mutations: {
-    [types.GAME.SET_PROGRESS](state) {
+    [types.GAME.mutations.SET_PROGRESS](state) {
       state.progress++;
     },
-    [types.GAME.SET_QUESTION](state, question) {
+    [types.GAME.mutations.SET_QUESTION](state, question) {
       state.question = question;
     },
-    [types.GAME.SET_ANSWERS](state, answer) {
+    [types.GAME.mutations.SET_ANSWERS](state, answer) {
       state.answers.push(answer);
     },
-    [types.TIMER.SET_SHOW_CORRECT_ANSWER_TIMER](state, flag) {
+    [types.TIMER.mutations.SET_SHOW_CORRECT_ANSWER_TIMER](state, flag) {
       state.showCorrectAnswerTimer = flag;
+    },
+    [types.TIMER.mutations.SET_ENABLE_ANSWERS](state, flag) {
+      state.enableAnswers = flag;
+    },
+    [types.GAME.mutations.EMPTY_TRIVIA_NEXT_ROUND](state) {
+      state.progress++;
+      state.question = "";
+      state.answer = [];
+      state.enableAnswers = false;
+      state.showCorrectAnswerTimer = false;
     },
   },
   actions: {
-    [types.GAME.UPDATE_PROGRESS]({ commit }) {
-      commit("SET_PROGRESS");
+    [types.GAME.actions.UPDATE_PROGRESS]({ commit }) {
+      commit(types.GAME.mutations.SET_PROGRESS);
     },
-    async [types.GAME.FETCH_TRIVIA]({ commit }) {
+    async [types.GAME.actions.FETCH_TRIVIA]({ state, commit }) {
       //check state.progress for the level of difficulty
+      let difficulty;
+
+      if (state.progress <= 6) {
+        difficulty = "easy";
+      } else if (state.progress <= 11) {
+        difficulty = "medium";
+      } else {
+        difficulty = "hard";
+      }
 
       //   const categories = rootState.selectedCategories;
 
@@ -36,29 +57,46 @@ export default {
 
       const data = await axios.get("https://opentdb.com/api.php", {
         params: {
-          amount: 1,
+          amount: 10,
           category: 15,
-          difficulty: "easy",
+          difficulty: difficulty,
           type: "multiple",
         },
       });
 
+      console.log(data.data.results);
+
+      const test = [];
+      data.data.results.forEach((element) => {
+        test.push({
+          question: decode_html(element.question),
+          answers: populate_answers(),
+        });
+      });
+
       const question = decode_html(data.data.results[0].question);
 
-      commit("SET_QUESTION", question);
+      commit(types.GAME.mutations.SET_QUESTION, question);
 
       populate_answers(commit, data.data.results[0]);
     },
-    [types.TIMER.UPDATE_SHOW_CORRECT_ANSWER_TIMER]({ commit }, flag) {
-      commit("SET_SHOW_CORRECT_ANSWER_TIMER", flag);
+    [types.TIMER.actions.UPDATE_SHOW_CORRECT_ANSWER_TIMER]({ commit }, flag) {
+      commit(types.TIMER.mutations.SET_SHOW_CORRECT_ANSWER_TIMER, flag);
+    },
+    [types.TIMER.actions.UPDATE_ENABLE_ANSWERS]({ commit }, flag) {
+      commit(types.TIMER.mutations.SET_ENABLE_ANSWERS, flag);
+    },
+    [types.GAME.actions.EMPTY_TRIVIA_NEXT_ROUND]({ commit }) {
+      commit(types.GAME.mutations.EMPTY_TRIVIA_NEXT_ROUND);
     },
   },
   getters: {
-    [types.GAME.GET_PROGRESS]: (state) => state.progress,
-    [types.GAME.GET_QUESTION]: (state) => state.question,
-    [types.GAME.GET_ANSWERS]: (state) => state.answers,
-    [types.TIMER.GET_SHOW_CORRECT_ANSWER_TIMER]: (state) =>
+    [types.GAME.getters.GET_PROGRESS]: (state) => state.progress,
+    [types.GAME.getters.GET_QUESTION]: (state) => state.question,
+    [types.GAME.getters.GET_ANSWERS]: (state) => state.answers,
+    [types.TIMER.getters.GET_SHOW_CORRECT_ANSWER_TIMER]: (state) =>
       state.showCorrectAnswerTimer,
+    [types.TIMER.getters.GET_ENABLE_ANSWERS]: (state) => state.enableAnswers,
   },
 };
 
@@ -89,7 +127,11 @@ function populate_answers(commit, data) {
     commit("SET_ANSWERS", answer);
     i++;
 
-    if (i === 4) clearInterval(delayedAnswers);
+    if (i === 4) {
+      // let flag = true;
+      // dispatch(types.TIMER.actions.SET_ENABLE_ANSWERS, flag);
+      clearInterval(delayedAnswers);
+    }
   }, 2000);
 }
 
