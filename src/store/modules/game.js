@@ -2,7 +2,8 @@ import axios from "axios";
 import types from "../constants";
 export default {
   state: {
-    progress: 0,
+    gameProgress: 0,
+    questionProgress: 0,
     triviaData: [],
     question: "",
     answers: [],
@@ -12,8 +13,8 @@ export default {
     enableAnswers: false,
   },
   mutations: {
-    [types.GAME.mutations.SET_PROGRESS](state) {
-      state.progress++;
+    [types.GAME.mutations.SET_QUESTION_PROGRESS](state) {
+      state.questionProgress;
     },
     [types.GAME.mutations.SET_QUESTION](state, question) {
       state.question = question;
@@ -28,70 +29,103 @@ export default {
       state.enableAnswers = flag;
     },
     [types.GAME.mutations.EMPTY_TRIVIA_NEXT_ROUND](state) {
-      state.progress++;
+      state.gameProgress++;
+      state.questionProgress++;
       state.question = "";
-      state.answer = [];
+      state.answers = [];
       state.enableAnswers = false;
       state.showCorrectAnswerTimer = false;
+      if (state.gameProgress === 7 || state.gameProgress === 12)
+        state.questionProgress = 0;
+
+      this.dispatch(types.GAME.actions.START_NEXT_ROUND);
+    },
+    [types.GAME.mutations.SET_TRIVIA_DATA](state, triData) {
+      state.triviaData.push(triData);
     },
   },
   actions: {
-    [types.GAME.actions.UPDATE_PROGRESS]({ commit }) {
-      commit(types.GAME.mutations.SET_PROGRESS);
-    },
-    async [types.GAME.actions.FETCH_TRIVIA]({ state, commit }) {
-      //check state.progress for the level of difficulty
-      let difficulty;
-
-      if (state.progress <= 6) {
-        difficulty = "easy";
-      } else if (state.progress <= 11) {
-        difficulty = "medium";
-      } else {
-        difficulty = "hard";
-      }
-
+    async [types.GAME.actions.FETCH_TRIVIA]({ commit, dispatch }) {
       //   const categories = rootState.selectedCategories;
 
       //   let randomIndex = Math.floor(Math.random() * categories.length);
 
-      const data = await axios.get("https://opentdb.com/api.php", {
+      // categories[randomIndex]
+
+      const easyData = await axios.get("https://opentdb.com/api.php", {
         params: {
-          amount: 10,
+          amount: 7,
           category: 15,
-          difficulty: difficulty,
+          difficulty: "easy",
           type: "multiple",
         },
       });
 
-      console.log(data.data.results);
+      commit(types.GAME.mutations.SET_TRIVIA_DATA, easyData.data.results);
 
-      const test = [];
-      data.data.results.forEach((element) => {
-        test.push({
-          question: decode_html(element.question),
-          answers: populate_answers(),
-        });
+      const mediumData = await axios.get("https://opentdb.com/api.php", {
+        params: {
+          amount: 5,
+          category: 15,
+          difficulty: "medium",
+          type: "multiple",
+        },
       });
 
-      const question = decode_html(data.data.results[0].question);
+      commit(types.GAME.mutations.SET_TRIVIA_DATA, mediumData.data.results);
 
-      commit(types.GAME.mutations.SET_QUESTION, question);
+      const hardData = await axios.get("https://opentdb.com/api.php", {
+        params: {
+          amount: 3,
+          category: 15,
+          difficulty: "hard",
+          type: "multiple",
+        },
+      });
 
-      populate_answers(commit, data.data.results[0]);
+      commit(types.GAME.mutations.SET_TRIVIA_DATA, hardData.data.results);
+
+      dispatch(types.GAME.actions.START_NEXT_ROUND);
     },
     [types.TIMER.actions.UPDATE_SHOW_CORRECT_ANSWER_TIMER]({ commit }, flag) {
       commit(types.TIMER.mutations.SET_SHOW_CORRECT_ANSWER_TIMER, flag);
     },
-    [types.TIMER.actions.UPDATE_ENABLE_ANSWERS]({ commit }, flag) {
+    [types.TIMER.actions.UPDATE_ENABLE_ANSWERS]({ commit }, flag = false) {
       commit(types.TIMER.mutations.SET_ENABLE_ANSWERS, flag);
     },
     [types.GAME.actions.EMPTY_TRIVIA_NEXT_ROUND]({ commit }) {
       commit(types.GAME.mutations.EMPTY_TRIVIA_NEXT_ROUND);
     },
+    [types.GAME.actions.START_NEXT_ROUND]({ commit, dispatch, state }) {
+      let index = 0;
+      switch (state.gameProgress) {
+        case 7:
+          index = 1;
+          break;
+        case 12:
+          index = 2;
+          break;
+        default:
+          break;
+      }
+
+      if (state.gameProgress >= 7) index = 1;
+      if (state.gameProgress >= 12) index = 2;
+
+      const question = decode_html(
+        state.triviaData[index][state.questionProgress].question
+      );
+      commit(types.GAME.mutations.SET_QUESTION, question);
+
+      populate_answers(
+        commit,
+        dispatch,
+        state.triviaData[index][state.questionProgress]
+      );
+    },
   },
   getters: {
-    [types.GAME.getters.GET_PROGRESS]: (state) => state.progress,
+    [types.GAME.getters.GET_GAME_PROGRESS]: (state) => state.gameProgress,
     [types.GAME.getters.GET_QUESTION]: (state) => state.question,
     [types.GAME.getters.GET_ANSWERS]: (state) => state.answers,
     [types.TIMER.getters.GET_SHOW_CORRECT_ANSWER_TIMER]: (state) =>
@@ -106,7 +140,7 @@ function decode_html(txt) {
   return temp.value;
 }
 
-function populate_answers(commit, data) {
+function populate_answers(commit, dispatch, data) {
   let answersArray = [];
   let tempAnswer = {
     answer: decode_html(data.correct_answer),
@@ -128,8 +162,8 @@ function populate_answers(commit, data) {
     i++;
 
     if (i === 4) {
-      // let flag = true;
-      // dispatch(types.TIMER.actions.SET_ENABLE_ANSWERS, flag);
+      let flag = true;
+      dispatch(types.TIMER.actions.UPDATE_ENABLE_ANSWERS, flag);
       clearInterval(delayedAnswers);
     }
   }, 2000);

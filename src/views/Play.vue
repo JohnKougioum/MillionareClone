@@ -25,6 +25,7 @@
           </div>
         </div>
       </div>
+      <Sidebar />
     </div>
   </div>
 </template>
@@ -32,10 +33,13 @@
 <script>
 import { mapGetters, mapActions } from "vuex";
 import Answer from "../components/Answer.vue";
+import Sidebar from "../components/Sidebar.vue";
+
 export default {
   name: "Play",
   components: {
     Answer,
+    Sidebar,
   },
   data() {
     return {

@@ -47,25 +47,32 @@ export default {
     ...mapGetters([
       "GET_ANSWERS",
       "GET_SHOW_CORRECT_ANSWER_TIMER",
-      "GET_ENABLED_ANSWERS",
+      "GET_ENABLE_ANSWERS",
     ]),
   },
   methods: {
     takeAGuess() {
+      if (!this.GET_ENABLE_ANSWERS) return;
+      this.UPDATE_ENABLE_ANSWERS();
       this.guessColor = true;
       setTimeout(() => {
         let flag = true;
         this.UPDATE_SHOW_CORRECT_ANSWER_TIMER(flag);
       }, 2000);
+      setTimeout(() => {
+        this.prepareForNextRound();
+      }, 2000);
     },
     prepareForNextRound() {
       setTimeout(() => {
-        this.EMPTY_TRIVIA_NEXT_ROUND;
-      }, 4400);
+        this.EMPTY_TRIVIA_NEXT_ROUND();
+        this.guessColor = false;
+      }, 1000);
     },
     ...mapActions([
       "UPDATE_SHOW_CORRECT_ANSWER_TIMER",
       "EMPTY_TRIVIA_NEXT_ROUND",
+      "UPDATE_ENABLE_ANSWERS",
     ]),
   },
 };
