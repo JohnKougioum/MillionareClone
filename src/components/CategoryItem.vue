@@ -1,21 +1,7 @@
 <template>
   <div
     @click="pickCategory"
-    class="
-      text-white
-      relative
-      z-10
-      my-5
-      w-56
-      h-14
-      rounded
-      bg-gray-400
-      hover:bg-gray-500
-      cursor-pointer
-      flex
-      justify-center
-      items-center
-    "
+    class="text-white relative z-10 my-5 w-5/6 h-20 rounded bg-gray-400 hover:bg-gray-500 cursor-pointer flex justify-center items-center"
     :class="selected ? 'bg-indigo-900 hover:bg-indigo-700' : ''"
   >
     <div class="text-xl">{{ category.category }}</div>
@@ -52,5 +38,4 @@ export default {
 };
 </script>
 
-<style>
-</style>
+<style></style>

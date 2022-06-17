@@ -31,7 +31,7 @@ export default new Vuex.Store({
       commit("SET_SELECTED_CATEGORIES", item);
     },
     [types.CATEGORIES.actions.DELETE_SELECTED_CATEGORY]: ({ commit }, item) => {
-      commit("DELETE_SELECTED_CATEGORY", item);
+      commit(types.CATEGORIES.mutations.DELETE_SELECTED_CATEGORY, item);
     },
   },
   getters: {

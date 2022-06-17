@@ -39,15 +39,15 @@ export default {
       if (
         this.GET_SHOW_CORRECT_ANSWER_TIMER &&
         this.GET_ANSWERS[this.index].correct
-      ) {
+      )
         return true;
-      }
       return false;
     },
     ...mapGetters([
       "GET_ANSWERS",
       "GET_SHOW_CORRECT_ANSWER_TIMER",
       "GET_ENABLE_ANSWERS",
+      "GET_ROUND_RESULTS",
     ]),
   },
   methods: {
@@ -55,10 +55,17 @@ export default {
       if (!this.GET_ENABLE_ANSWERS) return;
       this.UPDATE_ENABLE_ANSWERS();
       this.guessColor = true;
+      let guessIndex = this.index;
+      this.CHECK_ROUND_RESULT(guessIndex);
+      this.createTimeouts();
+    },
+    createTimeouts() {
       setTimeout(() => {
         let flag = true;
         this.UPDATE_SHOW_CORRECT_ANSWER_TIMER(flag);
       }, 2000);
+
+      if (!this.GET_ROUND_RESULTS) return;
       setTimeout(() => {
         this.prepareForNextRound();
       }, 2000);
@@ -73,6 +80,7 @@ export default {
       "UPDATE_SHOW_CORRECT_ANSWER_TIMER",
       "EMPTY_TRIVIA_NEXT_ROUND",
       "UPDATE_ENABLE_ANSWERS",
+      "CHECK_ROUND_RESULT",
     ]),
   },
 };

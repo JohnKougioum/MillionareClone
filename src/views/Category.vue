@@ -1,12 +1,10 @@
 <template>
   <div class="h-screen w-full overflow-hidden">
-    <img
-      class="w-full h-full z-0 absolute image__blur select-none"
-      src="../assets/stage.jpg"
-      alt="HTML5"
-    />
+    <Background :isCategory="true" :addBlur="true" />
 
-    <div class="relative h-auto w-full top-1/2 transform -translate-y-1/2">
+    <div
+      class="absolute h-auto w-full md:top-1/2 transform md:-translate-y-1/2 py-6 md:py-0"
+    >
       <div class="font-black leading-5 w-auto flex justify-start">
         <div class="bg-black bg-opacity-40 rounded p-4">
           <h1 class="text-5xl text-yellow-400 text-opacity-80 select-none">
@@ -14,7 +12,9 @@
           </h1>
         </div>
       </div>
-      <div class="grid grid-cols-4 gap-0 px-24">
+      <div
+        class="grid grid-flow-row auto-rows-[minmax(0,_2fr)] md:grid md:grid-cols-4 md:gap-1 pl-14 md:pl-10"
+      >
         <CategoryItem
           v-for="(category, index) in categories"
           :key="index"
@@ -30,9 +30,22 @@
         </button>
       </div>
     </div>
-    <transition name="fade">
-      <TheModal v-if="showModal" @close="closeModal" />
-    </transition>
+    <portal to="modals" v-if="showModal">
+      <TheModal :show="showModal" @close="showModal = false">
+        <h1 slot="text" class="text-xl">
+          You need to pick at least 1 category!!
+        </h1>
+
+        <template slot="closeButton" slot-scope="{ close }">
+          <button
+            @click="close"
+            class="absolute bottom-0 right-0 mb-1 mr-3 bg-yellow-400 rounded py-1 px-2"
+          >
+            OK
+          </button>
+        </template>
+      </TheModal>
+    </portal>
   </div>
 </template>
 
@@ -40,12 +53,14 @@
 import categoriesList from "../categories.json";
 import CategoryItem from "../components/CategoryItem.vue";
 import TheModal from "../components/TheModal.vue";
+import Background from "../components/Background.vue";
 import { mapGetters } from "vuex";
 export default {
   name: "Category",
   components: {
     CategoryItem,
     TheModal,
+    Background,
   },
   data() {
     return {
@@ -64,25 +79,8 @@ export default {
       }
       this.$router.push({ name: "Play" });
     },
-    closeModal() {
-      this.showModal = false;
-    },
   },
 };
 </script>
 
-<style>
-.image__blur {
-  filter: blur(4px);
-  -webkit-filter: blur(4px);
-}
-
-.fade-enter-active {
-  transition: opacity 0.2s ease;
-}
-
-.fade-enter,
-.fade-leave-to {
-  opacity: 0;
-}
-</style>
+<style></style>

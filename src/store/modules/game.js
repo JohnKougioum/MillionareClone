@@ -11,6 +11,7 @@ export default {
     showQuestionTimer: false,
     showCorrectAnswerTimer: false,
     enableAnswers: false,
+    roundResults: true,
   },
   mutations: {
     [types.GAME.mutations.SET_QUESTION_PROGRESS](state) {
@@ -42,6 +43,9 @@ export default {
     },
     [types.GAME.mutations.SET_TRIVIA_DATA](state, triData) {
       state.triviaData.push(triData);
+    },
+    [types.GAME.mutations.SET_ROUND_RESULT](state, flag) {
+      state.roundResults = flag;
     },
   },
   actions: {
@@ -123,11 +127,16 @@ export default {
         state.triviaData[index][state.questionProgress]
       );
     },
+    [types.GAME.actions.CHECK_ROUND_RESULT]({ commit, state }, guessIndex) {
+      let flag = state.answers[guessIndex].correct;
+      commit(types.GAME.mutations.SET_ROUND_RESULT, flag);
+    },
   },
   getters: {
     [types.GAME.getters.GET_GAME_PROGRESS]: (state) => state.gameProgress,
     [types.GAME.getters.GET_QUESTION]: (state) => state.question,
     [types.GAME.getters.GET_ANSWERS]: (state) => state.answers,
+    [types.GAME.getters.GET_ROUND_RESULTS]: (state) => state.roundResults,
     [types.TIMER.getters.GET_SHOW_CORRECT_ANSWER_TIMER]: (state) =>
       state.showCorrectAnswerTimer,
     [types.TIMER.getters.GET_ENABLE_ANSWERS]: (state) => state.enableAnswers,
@@ -166,7 +175,7 @@ function populate_answers(commit, dispatch, data) {
       dispatch(types.TIMER.actions.UPDATE_ENABLE_ANSWERS, flag);
       clearInterval(delayedAnswers);
     }
-  }, 2000);
+  }, 200);
 }
 
 function shuffle(array) {

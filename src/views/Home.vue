@@ -1,10 +1,6 @@
 <template>
   <div class="h-screen w-full overflow-hidden">
-    <img
-      class="w-full h-full z-0 absolute image__blur select-none"
-      src="../assets/stage.jpg"
-      alt="HTML5"
-    />
+    <Background :isCategory="false" :addBlur="true" />
     <div
       class="w-full md:w-2/3 h-full relative left-1/2 transform -translate-x-1/2 z-10"
     >
@@ -31,8 +27,12 @@
 
 <script>
 import { mapActions } from "vuex";
+import Background from "../components/Background.vue";
 export default {
   name: "Home",
+  components: {
+    Background,
+  },
   methods: {
     startPlayPhase() {
       const flag = true;
@@ -45,11 +45,6 @@ export default {
 </script>
 
 <style scoped>
-.image__blur {
-  filter: blur(4px);
-  -webkit-filter: blur(4px);
-}
-
 .play__button {
   background-color: #040444;
 }

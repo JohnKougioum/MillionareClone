@@ -53,7 +53,7 @@ export default {
   },
   data() {
     return {
-      toggle: true,
+      toggle: false,
       clientProgressArray: [
         {
           number: 1,
