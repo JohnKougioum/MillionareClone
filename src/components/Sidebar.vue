@@ -125,7 +125,6 @@ export default {
   },
   methods: {
     toggleSidebar() {
-      console.log("asd");
       this.toggle = !this.toggle;
     },
   },

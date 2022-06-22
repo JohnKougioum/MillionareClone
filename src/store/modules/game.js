@@ -2,13 +2,13 @@ import axios from "axios";
 import types from "../constants";
 export default {
   state: {
-    gameProgress: 0,
+    gameProgress: 12,
     questionProgress: 0,
     triviaData: [],
     question: "",
     answers: [],
-    gameTimer: false,
-    showQuestionTimer: false,
+    // gameTimer: false,
+    // showQuestionTimer: false,
     showCorrectAnswerTimer: false,
     enableAnswers: false,
     roundResults: true,
@@ -45,7 +45,19 @@ export default {
       state.triviaData.push(triData);
     },
     [types.GAME.mutations.SET_ROUND_RESULT](state, flag) {
+      console.log("flag = ", flag);
       state.roundResults = flag;
+      console.log(state.roundResults);
+    },
+    [types.GAME.mutations.RESET_GAME](state) {
+      state.gameProgress = 0;
+      state.questionProgress = 0;
+      state.triviaData = [];
+      state.question = "";
+      state.answers = [];
+      state.enableAnswers = false;
+      state.showCorrectAnswerTimer = false;
+      state.roundResults = true;
     },
   },
   actions: {
@@ -101,20 +113,18 @@ export default {
       commit(types.GAME.mutations.EMPTY_TRIVIA_NEXT_ROUND);
     },
     [types.GAME.actions.START_NEXT_ROUND]({ commit, dispatch, state }) {
-      let index = 0;
-      switch (state.gameProgress) {
-        case 7:
-          index = 1;
-          break;
-        case 12:
-          index = 2;
-          break;
-        default:
-          break;
+      console.log(state.gameProgress);
+      if (state.gameProgress === 15) {
+        return;
       }
+
+      let index = 0;
 
       if (state.gameProgress >= 7) index = 1;
       if (state.gameProgress >= 12) index = 2;
+      console.log(
+        state.triviaData[index][state.questionProgress].correct_answer
+      );
 
       const question = decode_html(
         state.triviaData[index][state.questionProgress].question
@@ -129,7 +139,13 @@ export default {
     },
     [types.GAME.actions.CHECK_ROUND_RESULT]({ commit, state }, guessIndex) {
       let flag = state.answers[guessIndex].correct;
+
+      console.log(state.gameProgress);
+      if (state.gameProgress === 15) flag = false;
       commit(types.GAME.mutations.SET_ROUND_RESULT, flag);
+    },
+    [types.GAME.actions.RESET_GAME]({ commit }) {
+      commit(types.GAME.mutations.RESET_GAME);
     },
   },
   getters: {

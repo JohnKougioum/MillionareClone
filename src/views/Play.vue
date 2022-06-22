@@ -25,16 +25,21 @@
     </div>
     <portal to="modals" v-if="showModal">
       <TheModal :show="showModal" @close="showModal = false">
-        <h1 v-if="!wonOrLostState" slot="text" class="text-xl">
-          You need to pick at least 1 category!!
-        </h1>
+        <h1 v-if="gameProgress < 15" slot="text" class="text-xl">You Lost!</h1>
+        <h1 v-else>Congratulations!!! You Won.</h1>
 
-        <template slot="closeButton" slot-scope="{ close }">
+        <template slot="footer">
           <button
-            @click="close"
-            class="absolute bottom-0 right-0 mb-1 mr-3 bg-yellow-400 rounded py-1 px-2"
+            @click="gotoHome"
+            class="absolute bottom-0 left-0 mb-1 ml-3 bg-yellow-400 rounded py-1 px-2"
           >
-            OK
+            Go to Home
+          </button>
+          <button
+            @click="restartGame"
+            class="absolute bottom-0 right-0 mb-1 mr-3 bg-indigo-900 text-white rounded py-1 px-2"
+          >
+            Play Again
           </button>
         </template>
       </TheModal>
@@ -65,7 +70,7 @@ export default {
   },
   computed: {
     ...mapState({
-      wonOrLostState: "roundResults",
+      gameProgress: (state) => state.game.gameProgress,
     }),
     ...mapGetters(["GET_QUESTION", "GET_ANSWERS", "GET_ROUND_RESULTS"]),
     roundResults() {
@@ -83,7 +88,19 @@ export default {
     this.FETCH_TRIVIA();
   },
   methods: {
-    ...mapActions(["FETCH_TRIVIA"]),
+    ...mapActions(["FETCH_TRIVIA", "RESET_GAME"]),
+    gotoHome() {
+      this.resetGame();
+      this.$router.push({ name: "Home" });
+    },
+    restartGame() {
+      this.resetGame();
+      this.$router.push({ name: "Category" });
+    },
+    resetGame() {
+      this.showModal = false;
+      this.RESET_GAME();
+    },
   },
 };
 </script>

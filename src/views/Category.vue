@@ -31,14 +31,14 @@
       </div>
     </div>
     <portal to="modals" v-if="showModal">
-      <TheModal :show="showModal" @close="showModal = false">
+      <TheModal :show="showModal">
         <h1 slot="text" class="text-xl">
           You need to pick at least 1 category!!
         </h1>
 
-        <template slot="closeButton" slot-scope="{ close }">
+        <template slot="footer">
           <button
-            @click="close"
+            @click="closeModal"
             class="absolute bottom-0 right-0 mb-1 mr-3 bg-yellow-400 rounded py-1 px-2"
           >
             OK
@@ -78,6 +78,9 @@ export default {
         return;
       }
       this.$router.push({ name: "Play" });
+    },
+    closeModal() {
+      this.showModal = false;
     },
   },
 };
