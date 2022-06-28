@@ -1,5 +1,8 @@
 # quiz
 
+## Demo
+https://johnkougioum.github.io/MillionareClone/
+
 ## Project setup
 ```
 npm install
