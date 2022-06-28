@@ -25,8 +25,10 @@
     </div>
     <portal to="modals" v-if="showModal">
       <TheModal :show="showModal" @close="showModal = false">
-        <h1 v-if="gameProgress < 15" slot="text" class="text-xl">You Lost!</h1>
-        <h1 v-else>Congratulations!!! You Won.</h1>
+        <template slot="text">
+          <h1 v-if="!wonModal" class="text-xl">You Lost!</h1>
+          <h1 v-else>Congratulations!!! You Won.</h1>
+        </template>
 
         <template slot="footer">
           <button
@@ -71,6 +73,7 @@ export default {
   computed: {
     ...mapState({
       gameProgress: (state) => state.game.gameProgress,
+      wonModal: (state) => state.game.showWonModal,
     }),
     ...mapGetters(["GET_QUESTION", "GET_ANSWERS", "GET_ROUND_RESULTS"]),
     roundResults() {
@@ -88,7 +91,7 @@ export default {
     this.FETCH_TRIVIA();
   },
   methods: {
-    ...mapActions(["FETCH_TRIVIA", "RESET_GAME"]),
+    ...mapActions(["FETCH_TRIVIA", "RESET_GAME", "RESET_EVERYTHING"]),
     gotoHome() {
       this.resetGame();
       this.$router.push({ name: "Home" });
@@ -100,6 +103,7 @@ export default {
     resetGame() {
       this.showModal = false;
       this.RESET_GAME();
+      this.RESET_EVERYTHING();
     },
   },
 };

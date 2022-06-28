@@ -2,9 +2,11 @@ export default {
   PLAY: {
     mutations: {
       SET_PLAY_PHASE: "SET_PLAY_PHASE",
+      RESET_EVERYTHING: "RESET_EVERYTHING",
     },
     actions: {
       UPDATE_PLAY_PHASE: "UPDATE_PLAY_PHASE",
+      RESET_EVERYTHING: "RESET_EVERYTHING",
     },
     getters: {
       GET_PLAY_PHASE: "GET_PLAY_PHASE",
@@ -32,6 +34,7 @@ export default {
       SET_TRIVIA_DATA: "SET_TRIVIA_DATA",
       SET_ROUND_RESULT: "SET_ROUND_RESULT",
       RESET_GAME: "RESET_GAME",
+      SET_WON_MODAL_APPEAR: "SET_WON_MODAL_APPEAR",
     },
     actions: {
       FETCH_TRIVIA: "FETCH_TRIVIA",

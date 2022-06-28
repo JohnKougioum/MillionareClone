@@ -7,7 +7,7 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    playPhase: true,
+    playPhase: false,
     selectedCategories: [],
   },
   mutations: {
@@ -18,6 +18,10 @@ export default new Vuex.Store({
     [types.CATEGORIES.mutations.DELETE_SELECTED_CATEGORY]: (state, item) => {
       const newList = state.selectedCategories.filter((el) => el !== item);
       state.selectedCategories = [...newList];
+    },
+    [types.PLAY.mutations.RESET_EVERYTHING]: (state) => {
+      state.playPhase = false;
+      state.selectedCategories = [];
     },
   },
   actions: {
@@ -32,6 +36,9 @@ export default new Vuex.Store({
     },
     [types.CATEGORIES.actions.DELETE_SELECTED_CATEGORY]: ({ commit }, item) => {
       commit(types.CATEGORIES.mutations.DELETE_SELECTED_CATEGORY, item);
+    },
+    [types.PLAY.actions.RESET_EVERYTHING]: ({ commit }) => {
+      commit(types.PLAY.mutations.RESET_EVERYTHING);
     },
   },
   getters: {

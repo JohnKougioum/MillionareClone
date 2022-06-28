@@ -2,16 +2,15 @@ import axios from "axios";
 import types from "../constants";
 export default {
   state: {
-    gameProgress: 12,
+    gameProgress: 0,
     questionProgress: 0,
     triviaData: [],
     question: "",
     answers: [],
-    // gameTimer: false,
-    // showQuestionTimer: false,
     showCorrectAnswerTimer: false,
     enableAnswers: false,
     roundResults: true,
+    showWonModal: false,
   },
   mutations: {
     [types.GAME.mutations.SET_QUESTION_PROGRESS](state) {
@@ -45,9 +44,7 @@ export default {
       state.triviaData.push(triData);
     },
     [types.GAME.mutations.SET_ROUND_RESULT](state, flag) {
-      console.log("flag = ", flag);
       state.roundResults = flag;
-      console.log(state.roundResults);
     },
     [types.GAME.mutations.RESET_GAME](state) {
       state.gameProgress = 0;
@@ -59,19 +56,20 @@ export default {
       state.showCorrectAnswerTimer = false;
       state.roundResults = true;
     },
+    [types.GAME.mutations.SET_WON_MODAL_APPEAR](state, flag) {
+      state.showWonModal = flag;
+    },
   },
   actions: {
-    async [types.GAME.actions.FETCH_TRIVIA]({ commit, dispatch }) {
-      //   const categories = rootState.selectedCategories;
+    async [types.GAME.actions.FETCH_TRIVIA]({ rootState, commit, dispatch }) {
+      const categories = rootState.selectedCategories;
 
-      //   let randomIndex = Math.floor(Math.random() * categories.length);
-
-      // categories[randomIndex]
+      let randomIndex = Math.floor(Math.random() * categories.length);
 
       const easyData = await axios.get("https://opentdb.com/api.php", {
         params: {
           amount: 7,
-          category: 15,
+          category: categories[randomIndex],
           difficulty: "easy",
           type: "multiple",
         },
@@ -82,7 +80,7 @@ export default {
       const mediumData = await axios.get("https://opentdb.com/api.php", {
         params: {
           amount: 5,
-          category: 15,
+          category: categories[randomIndex],
           difficulty: "medium",
           type: "multiple",
         },
@@ -93,7 +91,7 @@ export default {
       const hardData = await axios.get("https://opentdb.com/api.php", {
         params: {
           amount: 3,
-          category: 15,
+          category: categories[randomIndex],
           difficulty: "hard",
           type: "multiple",
         },
@@ -113,7 +111,6 @@ export default {
       commit(types.GAME.mutations.EMPTY_TRIVIA_NEXT_ROUND);
     },
     [types.GAME.actions.START_NEXT_ROUND]({ commit, dispatch, state }) {
-      console.log(state.gameProgress);
       if (state.gameProgress === 15) {
         return;
       }
@@ -122,9 +119,6 @@ export default {
 
       if (state.gameProgress >= 7) index = 1;
       if (state.gameProgress >= 12) index = 2;
-      console.log(
-        state.triviaData[index][state.questionProgress].correct_answer
-      );
 
       const question = decode_html(
         state.triviaData[index][state.questionProgress].question
@@ -140,8 +134,10 @@ export default {
     [types.GAME.actions.CHECK_ROUND_RESULT]({ commit, state }, guessIndex) {
       let flag = state.answers[guessIndex].correct;
 
-      console.log(state.gameProgress);
-      if (state.gameProgress === 15) flag = false;
+      if (state.gameProgress === 14) {
+        commit(types.GAME.mutations.SET_WON_MODAL_APPEAR, flag);
+        flag = false;
+      }
       commit(types.GAME.mutations.SET_ROUND_RESULT, flag);
     },
     [types.GAME.actions.RESET_GAME]({ commit }) {
@@ -191,7 +187,7 @@ function populate_answers(commit, dispatch, data) {
       dispatch(types.TIMER.actions.UPDATE_ENABLE_ANSWERS, flag);
       clearInterval(delayedAnswers);
     }
-  }, 200);
+  }, 2000);
 }
 
 function shuffle(array) {
