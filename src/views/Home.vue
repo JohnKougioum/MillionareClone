@@ -1,5 +1,5 @@
 <template>
-  <div class="h-screen w-full overflow-hidden">
+  <div class="h-full w-full overflow-hidden">
     <Background :isCategory="false" :addBlur="true" />
     <div
       class="w-full md:w-2/3 h-full relative left-1/2 transform -translate-x-1/2 z-10"
